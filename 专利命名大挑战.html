@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>外观专利命名大挑战</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0EA5E9',
+            secondary: '#7C3AED',
+            accent: '#F97316',
+            dark: '#0F172A',
+            light: '#E2E8F0'
+          },
+          fontFamily: {
+            tech: ['Orbitron', 'sans-serif'],
+            inter: ['Inter', 'sans-serif']
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .neon-glow {
+        box-shadow: 0 0 10px theme('colors.primary'), 0 0 20px theme('colors.primary');
+      }
+      .text-neon {
+        text-shadow: 0 0 5px theme('colors.primary'), 0 0 10px theme('colors.primary');
+      }
+      .bg-grid {
+        background-image: 
+          linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+      .patent-card {
+        transition: all 0.3s ease;
+      }
+      .patent-card:hover {
+        transform: translateY(-5px) scale(1.02);
+      }
+      .input-focus {
+        @apply border-primary/70 outline-none ring-2 ring-primary/50;
+      }
+      .btn-submit {
+        @apply bg-accent hover:bg-accent/90 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 neon-glow;
+      }
+      /* 模态框样式 */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+      }
+      .modal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+        max-height: 80%;
+        margin-top: 10%;
+      }
+      .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+      .close:hover,
+      .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      /* 三层导航按钮样式 */
+      .nav-btn {
+        @apply bg-primary/20 hover:bg-primary/30 text-primary font-bold py-2 px-6 rounded-full transition-all duration-300 mr-3;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-dark text-light min-h-screen bg-grid">
+  <!-- 动态粒子背景 -->
+  <canvas id="particleCanvas" class="fixed top-0 left-0 w-full h-full z-0"></canvas>
+  
+  <div class="container mx-auto px-4 py-8 relative z-10">
+    <!-- 标题区域 -->
+    <header class="text-center mb-12">
+      <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-tech text-neon mb-2">外观专利命名大挑战</h1>
+      <p class="text-[clamp(1rem,2vw,1.2rem)] text-light/80 max-w-3xl mx-auto">为不同文化纹理的电饭锅上盖设计规范的外观专利名称，掌握命名核心要素</p>
+    </header>
+    
+    <!-- 游戏说明 -->
+    <div class="bg-dark/50 backdrop-blur-md border border-primary/20 rounded-2xl p-6 mb-10 max-w-4xl mx-auto">
+      <h2 class="text-2xl font-tech text-neon mb-4">游戏规则</h2>
+      <ul class="space-y-2 text-light/90">
+        <li class="flex items-start">
+          <i class="fa fa-info-circle text-primary mt-1 mr-3"></i>
+          <span>第一层：选择您想挑战的文化纹理组别</span>
+        </li>
+        <li class="flex items-start">
+          <i class="fa fa-lightbulb-o text-primary mt-1 mr-3"></i>
+          <span>第二层：为该组别设计外观专利名称</span>
+        </li>
+        <li class="flex items-start">
+          <i class="fa fa-trophy text-primary mt-1 mr-3"></i>
+          <span>第三层：查看挑战结果并获取专业建议</span>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- 第一层：组别选择区域 -->
+    <div id="layer1" class="layer active">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <!-- 韩国组 -->
+        <div class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 cursor-pointer" data-group="krGroup">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+              <i class="fa fa-flag kr-flag text-primary text-xl"></i>
+            </div>
+            <h3 class="text-xl font-tech text-neon">韩国组</h3>
+          </div>
+        </div>
+        
+        <!-- 缅甸组 -->
+        <div class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 cursor-pointer" data-group="mmGroup">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+              <i class="fa fa-flag mm-flag text-primary text-xl"></i>
+            </div>
+            <h3 class="text-xl font-tech text-neon">缅甸组</h3>
+          </div>
+        </div>
+        
+        <!-- 菲律宾组 -->
+        <div class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 cursor-pointer" data-group="phGroup">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+              <i class="fa fa-flag ph-flag text-primary text-xl"></i>
+            </div>
+            <h3 class="text-xl font-tech text-neon">菲律宾组</h3>
+          </div>
+        </div>
+        
+        <!-- 越南组 -->
+        <div class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 cursor-pointer" data-group="vnGroup">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+              <i class="fa fa-flag vn-flag text-primary text-xl"></i>
+            </div>
+            <h3 class="text-xl font-tech text-neon">越南组</h3>
+          </div>
+        </div>
+        
+        <!-- 泰国组 -->
+        <div class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 cursor-pointer" data-group="thGroup">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+              <i class="fa fa-flag th-flag text-primary text-xl"></i>
+            </div>
+            <h3 class="text-xl font-tech text-neon">泰国组</h3>
+          </div>
+        </div>
+        
+        <!-- 柬埔寨组 -->
+        <div class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 cursor-pointer" data-group="khGroup">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+              <i class="fa fa-flag kh-flag text-primary text-xl"></i>
+            </div>
+            <h3 class="text-xl font-tech text-neon">柬埔寨组</h3>
+          </div>
+        </div>
+        
+        <!-- 老师组 -->
+        <div class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 cursor-pointer" data-group="teacherGroup">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+              <i class="fa fa-graduation-cap text-primary text-xl"></i>
+            </div>
+            <h3 class="text-xl font-tech text-neon">老师组</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 第二层：挑战区域 -->
+    <div id="layer2" class="layer hidden">
+      <!-- 韩国组 - 木槿花 -->
+      <div id="krGroup" class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 hidden challenge-content">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+            <i class="fa fa-flag kr-flag text-primary text-xl"></i>
+          </div>
+          <h3 class="text-xl font-tech text-neon">韩国组</h3>
+        </div>
+        <div class="mb-4">
+          <p class="text-light/80 mb-2">带有木槿花纹理的电饭锅上盖</p>
+          <img src="23/韩国.jpg" alt="木槿花纹理" class="w-full h-32 object-cover rounded-lg mb-4 clickable-img">
+        </div>
+        <div>
+          <input 
+            type="text" 
+            id="krName" 
+            class="w-full bg-dark/70 border border-primary/40 rounded-lg p-3 text-light focus:input-focus transition-all"
+            placeholder="请输入专利名称"
+          >
+        </div>
+      </div>
+      
+      <!-- 缅甸组 - 铜鼓放射纹 -->
+      <div id="mmGroup" class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 hidden challenge-content">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+            <i class="fa fa-flag mm-flag text-primary text-xl"></i>
+          </div>
+          <h3 class="text-xl font-tech text-neon">缅甸组</h3>
+        </div>
+        <div class="mb-4">
+          <p class="text-light/80 mb-2">带有铜鼓放射纹的电饭锅上盖</p>
+          <img src="23/缅甸.jpg" alt="铜鼓放射纹" class="w-full h-32 object-cover rounded-lg mb-4 clickable-img">
+        </div>
+        <div>
+          <input 
+            type="text" 
+            id="mmName" 
+            class="w-full bg-dark/70 border border-primary/40 rounded-lg p-3 text-light focus:input-focus transition-all"
+            placeholder="请输入专利名称"
+          >
+        </div>
+      </div>
+      
+      <!-- 菲律宾组 - 贝壳纹理 -->
+      <div id="phGroup" class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 hidden challenge-content">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+            <i class="fa fa-flag ph-flag text-primary text-xl"></i>
+          </div>
+          <h3 class="text-xl font-tech text-neon">菲律宾组</h3>
+        </div>
+        <div class="mb-4">
+          <p class="text-light/80 mb-2">带有贝壳纹理的电饭锅上盖</p>
+          <img src="23/菲律宾.jpg" alt="贝壳纹理" class="w-full h-32 object-cover rounded-lg mb-4 clickable-img">
+        </div>
+        <div>
+          <input 
+            type="text" 
+            id="phName" 
+            class="w-full bg-dark/70 border border-primary/40 rounded-lg p-3 text-light focus:input-focus transition-all"
+            placeholder="请输入专利名称"
+          >
+        </div>
+      </div>
+      
+      <!-- 越南组 - 莲花纹理 -->
+      <div id="vnGroup" class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 hidden challenge-content">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+            <i class="fa fa-flag vn-flag text-primary text-xl"></i>
+          </div>
+          <h3 class="text-xl font-tech text-neon">越南组</h3>
+        </div>
+        <div class="mb-4">
+          <p class="text-light/80 mb-2">带有莲花纹理的电饭锅上盖</p>
+          <img src="23/越南.jpg" alt="莲花纹理" class="w-full h-32 object-cover rounded-lg mb-4 clickable-img">
+        </div>
+        <div>
+          <input 
+            type="text" 
+            id="vnName" 
+            class="w-full bg-dark/70 border border-primary/40 rounded-lg p-3 text-light focus:input-focus transition-all"
+            placeholder="请输入专利名称"
+          >
+        </div>
+      </div>
+      
+      <!-- 泰国组 - 水晶+钟塔 -->
+      <div id="thGroup" class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 hidden challenge-content">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+            <i class="fa fa-flag th-flag text-primary text-xl"></i>
+          </div>
+          <h3 class="text-xl font-tech text-neon">泰国组</h3>
+        </div>
+        <div class="mb-4">
+          <p class="text-light/80 mb-2">带有水晶+钟塔纹理的电饭锅上盖</p>
+          <img src="23/泰国.jpg" alt="水晶+钟塔纹理" class="w-full h-32 object-cover rounded-lg mb-4 clickable-img">
+        </div>
+        <div>
+          <input 
+            type="text" 
+            id="thName" 
+            class="w-full bg-dark/70 border border-primary/40 rounded-lg p-3 text-light focus:input-focus transition-all"
+            placeholder="请输入专利名称"
+          >
+        </div>
+      </div>
+      
+      <!-- 柬埔寨组 - 钻石+石窟 -->
+      <div id="khGroup" class="patent-card bg-dark/50 backdrop-blur-md border border-primary/30 rounded-xl p-6 hidden challenge-content">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+            <i class="fa fa-flag kh-flag text-primary text-xl"></i>
+          </div>
+          <h3 class="text-xl font-tech text-neon">柬埔寨组</h3>
+        </div>
+        <div class="mb-4">
+          <p class="text-light/80 mb-2">带有钻石+石窟纹理的电饭锅上盖</p>
+          <img src="23/柬埔寨.jpg" alt="钻石+石窟纹理" class="w-full h-32 object-cover rounded-lg mb-4 clickable-img">
+        </div>
+        <div>
+          <input 
+            type="text" 
+            id="khName" 
+            class="w-full bg-dark/70 border border-primary/40 rounded-lg p-3 text-light focus:input-focus transition-all"
+            placeholder="请输入专利名称"
+          >
+        </div>
+      </div>
+      
+      <!-- 老师组 - 如意纹理 -->
+      <div id="teacherGroup" class="max-w-3xl mx-auto mb-12 hidden challenge-content">
+        <div class="patent-card bg-dark/50 backdrop-blur-md border-2 border-accent/50 rounded-xl p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mr-4">
+              <i class="fa fa-graduation-cap text-accent text-xl"></i>
+            </div>
+            <h3 class="text-xl font-tech text-accent">老师组</h3>
+          </div>
+          <div class="mb-4">
+            <p class="text-light/80 mb-2">带有如意纹理的电饭锅上盖</p>
+            <img src="23/中国.jpg" alt="如意纹理" class="w-full h-32 object-cover rounded-lg mb-4 clickable-img">
+          </div>
+          <div>
+            <input 
+              type="text" 
+              id="teacherName" 
+              class="w-full bg-dark/70 border border-accent/40 rounded-lg p-3 text-light focus:input-focus transition-all"
+              placeholder="请输入专利名称"
+            >
+          </div>
+        </div>
+      </div>
+      
+      <!-- 导航按钮 -->
+      <div class="text-center mt-8">
+        <button id="backToLayer1" class="nav-btn">
+          <i class="fa fa-arrow-left mr-2"></i>返回组别选择
+        </button>
+        <button id="goToLayer3" class="nav-btn">
+          <i class="fa fa-arrow-right mr-2"></i>查看挑战结果
+        </button>
+      </div>
+    </div>
+    
+    <!-- 第三层：结果展示区域 -->
+    <div id="layer3" class="layer hidden">
+      <div class="max-w-4xl mx-auto mt-12 bg-dark/50 backdrop-blur-md border border-primary/20 rounded-2xl p-6">
+        <h2 class="text-2xl font-tech text-neon mb-6 text-center">命名挑战结果</h2>
+        <div id="resultsList" class="space-y-4"></div>
+        <!-- 导航按钮 -->
+        <div class="text-center mt-8">
+          <button id="backToLayer2" class="nav-btn">
+            <i class="fa fa-arrow-left mr-2"></i>返回命名挑战
+          </button>
+          <button id="restartGame" class="nav-btn">
+            <i class="fa fa-refresh mr-2"></i>重新开始
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模态框 -->
+  <div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="img01">
+  </div>
+
+  <script>
+    // 动态粒子背景
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 3 - 1.5;
+        this.speedY = Math.random() * 3 - 1.5;
+        this.color = `rgba(14, 165, 233, ${Math.random() * 0.5 + 0.1})`;
+      }
+      
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        if (this.x < 0 || this.x > canvas.width) {
+          this.speedX *= -1;
+        }
+        if (this.y < 0 || this.y > canvas.height) {
+          this.speedY *= -1;
+        }
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+    
+    const particles = [];
+    for (let i = 0; i < 100; i++) {
+      particles.push(new Particle());
+    }
+    
+    function animate() {
+      requestAnimationFrame(animate);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+    }
+    animate();
+    
+    // 窗口大小调整时重新设置canvas尺寸
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+    
+    // 各组命名验证规则
+    const validationRules = {
+      krName: {
+        required: true,
+        valid: (name) => name.includes('木槿花') && !/新型|多功能|智能|超|强/i.test(name),
+        example: '木槿花图案韩式电饭锅上盖'
+      },
+      mmName: {
+        required: true,
+        valid: (name) => name.includes('铜鼓放射纹') && !/新型|多功能|智能|超|强/i.test(name),
+        example: '铜鼓放射纹装饰电饭锅上盖'
+      },
+      phName: {
+        required: true,
+        valid: (name) => name.includes('贝壳纹理') && !/新型|多功能|智能|超|强/i.test(name),
+        example: '贝壳纹理装饰电饭锅上盖'
+      },
+      vnName: {
+        required: true,
+        valid: (name) => name.includes('莲花纹理') && !/新型|多功能|智能|超|强/i.test(name),
+        example: '莲花纹理中式电饭锅上盖'
+      },
+      thName: {
+        required: true,
+        valid: (name) => (name.includes('水晶') && name.includes('钟塔')) && !/新型|多功能|智能|超|强/i.test(name),
+        example: '水晶钟塔纹理泰国风电饭锅上盖'
+      },
+      khName: {
+        required: true,
+        valid: (name) => (name.includes('钻石') && name.includes('石窟')) && !/新型|多功能|智能|超|强/i.test(name),
+        example: '钻石石窟纹理柬埔寨风电饭锅上盖'
+      },
+      teacherName: {
+        required: true,
+        valid: (name) => name.includes('如意纹理') && !/新型|多功能|智能|超|强/i.test(name),
+        example: '如意纹理中式电饭锅上盖'
+      }
+    };
+    
+    // 三层导航控制
+    const layer1 = document.getElementById('layer1');
+    const layer2 = document.getElementById('layer2');
+    const layer3 = document.getElementById('layer3');
+    
+    function showLayer(layerId) {
+      layer1.classList.add('hidden');
+      layer2.classList.add('hidden');
+      layer3.classList.add('hidden');
+      document.getElementById(layerId).classList.remove('hidden');
+    }
+    
+    // 第一层：组别选择点击事件
+    const groupSelection = document.getElementById('layer1');
+    groupSelection.addEventListener('click', (event) => {
+      if (event.target.closest('.patent-card')) {
+        const group = event.target.closest('.patent-card').dataset.group;
+        // 隐藏所有挑战组
+        const allGroups = document.querySelectorAll('.challenge-content');
+        allGroups.forEach(groupDiv => {
+          groupDiv.classList.add('hidden');
+        });
+        // 显示选择的挑战组
+        document.getElementById(group).classList.remove('hidden');
+        // 切换到第二层
+        showLayer('layer2');
+      }
+    });
+    
+    // 第二层导航按钮事件
+    document.getElementById('backToLayer1').addEventListener('click', () => {
+      showLayer('layer1');
+    });
+    
+    document.getElementById('goToLayer3').addEventListener('click', () => {
+      // 验证命名并显示结果
+      let allValid = true;
+      const resultsList = document.getElementById('resultsList');
+      resultsList.innerHTML = '';
+      
+      for (const [id, rule] of Object.entries(validationRules)) {
+        const input = document.getElementById(id);
+        if (input && !input.value.trim()) continue; // 允许未填写时导航
+        const name = input ? input.value.trim() : '';
+        const isvalid = input ? rule.valid(name) : true;
+        
+        // 创建结果项
+        const resultItem = document.createElement('div');
+        resultItem.className = `p-4 rounded-lg ${isvalid ? 'bg-green-900/50 border border-green-500' : 'bg-red-900/50 border border-red-500'}`;
+        
+        // 组名
+        const groupName = id === 'teacherName' ? '老师组' : id.toUpperCase().replace(/(.)(Name)/, (_, $1) => $1.toUpperCase() + '组');
+        resultItem.innerHTML = `
+          <h3 class="font-tech text-neon mb-2">${groupName}</h3>
+          <p class="text-light/80 mb-2"><span class="font-medium">您的命名:</span> ${name || '未填写'}</p>
+          ${isvalid ? 
+            '<p class="text-green-400"><i class="fa fa-check-circle mr-2"></i>命名规范，符合外观专利命名要求</p>' : 
+            `<p class="text-red-400"><i class="fa fa-times-circle mr-2"></i>命名不规范，${name ? '请确保' : '请'}突出设计特色并避免模糊词汇</p>`
+          }
+          ${name && !isvalid ? `<p class="text-yellow-300 mt-2"><i class="fa fa-lightbulb-o mr-2"></i>参考示例: ${rule.example}</p>` : ''}
+        `;
+        
+        resultsList.appendChild(resultItem);
+        allValid = allValid && isvalid;
+      }
+      
+      // 切换到第三层
+      showLayer('layer3');
+    });
+    
+    // 第三层导航按钮事件
+    document.getElementById('backToLayer2').addEventListener('click', () => {
+      showLayer('layer2');
+    });
+    
+    document.getElementById('restartGame').addEventListener('click', () => {
+      // 清空输入框
+      for (const id of Object.keys(validationRules)) {
+        const input = document.getElementById(id);
+        if (input) input.value = '';
+      }
+      // 隐藏所有挑战组
+      const allGroups = document.querySelectorAll('.challenge-content');
+      allGroups.forEach(groupDiv => {
+        groupDiv.classList.add('hidden');
+      });
+      // 切换到第一层
+      showLayer('layer1');
+    });
+    
+    // 图片点击事件
+    const modal = document.getElementById("myModal");
+    const img01 = document.getElementById("img01");
+    const closeBtn = document.getElementsByClassName("close")[0];
+
+    const clickableImages = document.querySelectorAll('.clickable-img');
+    clickableImages.forEach(img => {
+      img.addEventListener('click', () => {
+        modal.style.display = "block";
+        img01.src = img.src;
+      });
+    });
+
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = "none";
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
